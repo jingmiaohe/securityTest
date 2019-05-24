@@ -87,3 +87,13 @@ export function checkQuestions(num, size) {
   })
 }
 
+export function delQuestion(id) {
+  return request({
+    url: '/question/delete',
+    method: 'post',
+    data: {
+      questionId: id
+    }
+  })
+}
+

@@ -1,11 +1,12 @@
 <template>
   <div class="questionContent">
     <div class="questionTitle">
-      {{number+1}}、{{question.questionText}}？（{{questionWeighting}}分）
-      <br>
+      {{number+1}}、{{question.questionText}}&nbsp;（{{questionWeighting}}分）
+      <br><br style="line-height:5px;">
       <img v-if="question.type === 3" :src="question.questionRich" alt="">
+      <img v-if="question.questionRich && (question.type === 4 || question.type === 5)" :src="question.questionRich" alt="">
       <video-player class="video-player vjs-custom-skin"
-                    style="width:300px"
+                    style="width:500px;display:inline-block"
                     v-if="question.type === 6 || question.type === 7"
                     ref="videoPlayer"
                     :playsinline="true"
@@ -22,29 +23,29 @@
       <li><button :class="choosedButtonClass('A')" @click="chooseAnswer('A',question.id)">A、{{question.option1Text}}</button></li>
       <li><button :class="choosedButtonClass('B')" @click="chooseAnswer('B',question.id)">B、{{question.option2Text}}</button></li>
       <li><button :class="choosedButtonClass('C')" @click="chooseAnswer('C',question.id)">C、{{question.option3Text}}</button></li>
-      <li><button :class="choosedButtonClass('D')" @click="chooseAnswer('D',question.id)">D、{{question.option4Text}}</button></li>
+      <li v-if="question.option4Text"><button :class="choosedButtonClass('D')" @click="chooseAnswer('D',question.id)">D、{{question.option4Text}}</button></li>
     </ul>
     <ul v-if="question.type === 6 || question.type === 7 || question.type === 4 || question.type === 5"
         class="questionOption optionRow clearfix">
       <li>
-        <img v-if="question.type === 4 || question.type === 5" :src="question.option1Rich" alt="">
-        <br v-if="question.type === 4 || question.type === 5">
+        <img v-if="question.option1Rich && (question.type === 4 || question.type === 5)" :src="question.option1Rich" alt="">
+        <br v-if="question.option1Rich && (question.type === 4 || question.type === 5)">
         <button :class="choosedButtonClass('A')"
                 @click="chooseAnswer('A',question.id)">A、{{question.option1Text}}</button>
       </li>
       <li>
-        <img v-if="question.type === 4 || question.type === 5" :src="question.option2Rich" alt="">
-        <br v-if="question.type === 4 || question.type === 5">
+        <img v-if="question.option2Rich && (question.type === 4 || question.type === 5)" :src="question.option2Rich" alt="">
+        <br v-if="question.option2Rich && (question.type === 4 || question.type === 5)">
         <button :class="choosedButtonClass('B')"
                 @click="chooseAnswer('B',question.id)">B、{{question.option2Text}}</button></li>
       <li>
-        <img v-if="question.type === 4 || question.type === 5" :src="question.option3Rich" alt="">
-        <br v-if="question.type === 4 || question.type === 5">
+        <img v-if="question.option3Rich && (question.type === 4 || question.type === 5)" :src="question.option3Rich" alt="">
+        <br v-if="question.option3Rich && (question.type === 4 || question.type === 5)">
         <button :class="choosedButtonClass('C')"
                 @click="chooseAnswer('C',question.id)">C、{{question.option3Text}}</button></li>
-      <li>
-        <img v-if="question.type === 4 || question.type === 5" :src="question.option4Rich" alt="">
-        <br v-if="question.type === 4 || question.type === 5">
+      <li v-if="question.option4Text">
+        <img v-if="question.option4Rich && (question.type === 4 || question.type === 5)" :src="question.option4Rich" alt="">
+        <br v-if="question.option4Rich && (question.type === 4 || question.type === 5)">
         <button :class="choosedButtonClass('D')"
                 @click="chooseAnswer('D',question.id)">D、{{question.option4Text}}</button>
       </li>
@@ -120,9 +121,10 @@
         }
       },
       playerOptions(){
+        var that = this;
         return function(rich) {
-          this.options.sources.src = rich;
-          return this.options;
+          that.options.sources[0].src = rich;
+          return that.options;
         }
         }
       },
@@ -202,6 +204,7 @@
       text-align: center;
       img{
         margin-top: 20px;
+        max-height:300px;
       }
     }
     .questionOption{
@@ -255,7 +258,7 @@
           float: left;
           width:50%;
           button{
-            max-width:300px;
+            max-width:360px;
             width:calc(~"100% - 10px");
           }
           img{

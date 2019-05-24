@@ -12,12 +12,12 @@
         </li>
         <li>
           <el-tooltip content="回到主页" effect="light" v-show="showMenu">
-            <i class="el-icon-menu"  @click="handleClickMenu"></i>
+            <img src="@/assets/images/main.jpg" @click="handleClickMenu" alt="">
           </el-tooltip>
         </li>
         <li>
           <el-tooltip content="退出登录" effect="light" v-show="showClose">
-            <i class="el-icon-circle-close"  @click="handleClickClose"></i>
+            <i class="el-icon-circle-close"  @click="handleClickClose" style="font-size:28px;"></i>
           </el-tooltip>
         </li>
 
@@ -31,7 +31,8 @@
     name: 'systemTitle',
     data () {
       return {
-        noticeNum: 0
+        noticeNum: 0,
+        notice: ''
       }
     },
     props: {
@@ -61,7 +62,7 @@
             ulHtml += '<li>'+data[i]['content']+'</li>'
           }
           if (len > 0) {
-            that.$notify({
+            that.notice = that.$notify({
               title: '公 告',
               dangerouslyUseHTMLString: true,
               message: ulHtml
@@ -77,21 +78,38 @@
         }
       },
       handleClickClose() {
-        if(this.$route.meta['role'] === 'student') {
-          this.$store.dispatch('LogOut').then(() => {
-            this.$router.push({path: '/login'});
-          })
-        } else if (this.$route.meta['role'] === 'admin') {
-          this.$store.dispatch('TLogOut').then(() => {
-            this.$router.push({path: '/login'});
-          })
+        var tip = '';
+        if (this.$route.params.code === 'test') {
+          tip = '退出当前考试将不计算当前考试成绩，是否退出？'
+        } else {
+          tip = '确认退出？'
         }
-
+        this.$confirm(tip, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          if(this.$route.meta['role'] === 'student') {
+            this.$store.dispatch('LogOut').then(() => {
+              this.$router.push({path: '/login'});
+            })
+          } else if (this.$route.meta['role'] === 'admin') {
+            this.$store.dispatch('TLogOut').then(() => {
+              this.$router.push({path: '/login'});
+            })
+          }
+        })
     }
   },
     created() {
       if (this.$route.name === 'data') {
         this.handleClickMess();
+      }
+    },
+    destroyed() {
+      if (this.notice) {
+        console.log('close')
+        this.notice.close();
       }
     }
   }

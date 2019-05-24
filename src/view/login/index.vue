@@ -1,9 +1,9 @@
 <template>
   <div class="loginPage">
-    <img class="backgroundImg" src="@/assets/images/background.png" alt="login">
+    <img class="backgroundImg" src="@/assets/images/background.jpg" alt="login">
     <img class="systemNameImg" src="@/assets/images/systemName.png" alt="systemName">
     <div class="loginBox">
-      <img src="@/assets/images/loginBox.png" alt="loginBox">
+      <img src="@/assets/images/login-1.jpg" alt="loginBox">
       <div class="clearfix cardTitle">
         <div :class="active === 'student'? 'active': ''"
              @click="active = 'student'"><img src="@/assets/images/studentLogin.jpg" alt=""></div>
@@ -21,7 +21,7 @@
           <img src="@/assets/images/login-8.png" alt="">
         </li>
         <li>
-          <el-button type="primary" @click="goLogin">登录</el-button>
+          <el-button class="loginButton" @click="goLogin">登录</el-button>
         </li>
       </ul>
     </div>
@@ -60,12 +60,16 @@
   }
 </script>
 <style scoped lang="less">
+  @import "~@/assets/styles/variable.less";
   .loginPage {
     height: 100%;
     position: relative;
+    background-color: @loginBgColor;
     .backgroundImg {
-        width: 100%;
-        height: 100%;
+      position: absolute;
+      width:50%;
+      top: 50px;
+      left:50px;
     }
     .systemNameImg {
       position: absolute;
@@ -84,23 +88,21 @@
       &>div.cardTitle{
         position: absolute;
         top:19px;
-        left:58px;
+        left:22px;
+        width:454px;
+        height:48px;
         text-align: center;
         &>div{
           float:left;
-          padding: 0 10px;
-          padding-top:2px;
-          box-sizing: border-box;
-          border: 1px solid #999;
-          border-bottom:0;
-          border-top-left-radius: 4px;
-          border-top-right-radius: 4px;
-          background-color: #54c3f1;
+          width: 50%;
+          height:100%;
+          background-color: @loginTitleBgColor;
           &.active{
-            background-color: #409EFF;
+            background-color: transparent;
           }
         }
         img{
+          margin-top:12px;
           width:60px;
         }
       }
@@ -110,12 +112,12 @@
       }
       ul{
           position: absolute;
-          top:50%;
+          top:55%;
           left:50%;
           transform:translate(-50%, -50%);
           li{
             position:relative;
-            margin-bottom:16px;
+            margin-bottom:24px;
             width:300px;
             .el-input+img{
               position: absolute;
@@ -127,6 +129,11 @@
               height: 40px;
               line-height:40px;
               padding:0;
+              color:#fff;
+              border-radius: 8px;
+              &.loginButton{
+                background: linear-gradient( #88dfff,#1e88ff);
+              }
             }
           }
         }

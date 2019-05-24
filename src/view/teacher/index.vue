@@ -1,6 +1,6 @@
 <template>
 <div class="manageModule">
-  <system-title></system-title>
+  <system-title :showClose="true"></system-title>
   <div class="teacherModuleContent">
     <div class="teacherInfo clearfix">
       <span class="leftSide">

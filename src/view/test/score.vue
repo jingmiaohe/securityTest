@@ -6,16 +6,17 @@
       <el-col class="scoreTime" :span="3">
         <div>
           <span>{{useTime}}</span>
-          <span>测试用时</span>
+          <span>测试用时(分)</span>
         </div>
       </el-col>
       <el-col :span="6" class="scoreProgress">
-        <el-progress type="circle" :percentage="Number(score)" :width="160" color="#ea5514" status="text">{{score}}</el-progress>
+        <el-progress type="circle" :percentage="Number(score)" :width="160" color="#ea5514" status="text"><span>{{score}}</span><br>分</el-progress>
+        <!--<el-progress type="circle" :percentage="Number(90)" :width="160" color="#ea5514" status="text"><span>100</span><br>分</el-progress>-->
         <span :class="scoreClass"></span>
       </el-col>
       <el-col class="scoreAccuracy" :span="3">
         <div>
-          <span>{{correctRate}}</span>
+          <span>{{Math.round(correctRate*100)+'%'}}</span>
           <span>正确率</span>
         </div>
       </el-col>

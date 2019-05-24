@@ -20,7 +20,10 @@
           <div class="shadow">
           </div>
           <transition name="el-fade-in">
-            <img v-show="showCongratulations" src="@/assets/images/congratulations.png" alt="">
+            <img v-show="showYes" src="@/assets/images/yes.jpg" alt="" style="width: 100px;">
+          </transition>
+          <transition name="el-fade-in">
+            <img v-show="showNo" src="@/assets/images/no.jpg" alt="" style="width: 100px;">
           </transition>
           <div class="ques-box">
             <question-comp
@@ -40,17 +43,17 @@
             </p>
           </transition>
           <ul class="testFoot clearfix">
-            <li>
-              <button class="pre" v-show="activeNum > 0" @click="getPreQuestion">上一题</button>
+            <li  v-show="activeNum > 0">
+              <button class="pre" @click="getPreQuestion">上一题</button>
             </li>
-            <li>
-              <button class="center" v-show="activeNum >= 0" @click="getAnswerKey">答案解析</button>
+            <li  v-show="activeNum >= 0" >
+              <button class="center" @click="getAnswerKey">答案解析</button>
             </li>
-            <li>
-              <button class="center" v-show="activeNum >= 0" @click="confirmAns">确定</button>
+            <li  v-show="activeNum >= 0" >
+              <button class="center" @click="confirmAns">确定</button>
             </li>
-            <li>
-              <button class="next" v-show="activeNum < allNum-1" @click="getNextQuestion">下一题</button>
+            <li  v-show="activeNum < allNum-1">
+              <button class="next" @click="getNextQuestion">下一题</button>
             </li>
           </ul>
         </div>
@@ -75,14 +78,24 @@
         allNum: 0,
         allQuestions: [],
         showAnswerKey: false, // 是否显示答案解析
-        showCongratulations: false,
-        answerKey: '' // 答案解析
+        showYes: false,
+        showNo: false
+      }
+    },
+    computed: {
+      answerKey(val, oldVal) {
+        if (this.allQuestions.length > 0) {
+          return this.allQuestions[this.activeNum]['analysis']
+        } else {
+          return '';
+        }
       }
     },
     methods: {
       resetCurAnswer(ans) {
-        var that = this;
         this.curAnswer = ans;
+        this.showYes = false;
+        this.showNo = false;
       },
       resetQuestionWeighting(weight) {
         this.questionWeighting = weight;
@@ -95,17 +108,27 @@
           this.activeNum -= 1;
         }
         this.showAnswerKey = false;
-        this.showCongratulations = false;
+        this.showYes = false;
+        this.showNo = false;
       },
       getAnswerKey() {
         this.showAnswerKey = !this.showAnswerKey;
-        this.answerKey = this.allQuestions[this.activeNum]['analysis']
       },
       confirmAns() {
-        if (this.curAnswer === this.allQuestions[this.activeNum]['answer']) {
-          this.showCongratulations = true;
-          delWrongQue(this.allQuestions[this.activeNum]['id']);
+        var tempRightAns = this.allQuestions[this.activeNum]['answer'];
+        while(tempRightAns.indexOf("，") !== -1){  //寻找每一个英文逗号，并替换
+          tempRightAns = tempRightAns.replace("，",",");
+        }
+        if (this.curAnswer === tempRightAns) {
+          this.showYes = true;
+          delWrongQue(this.allQuestions[this.activeNum]['id']).then(res => {
+            this.$message({
+              message: '回答正确，已从错题库移除',
+              type: 'success'
+            })
+          });
         } else {
+          this.showNo = true;
           this.showAnswerKey = true;
         }
       },
@@ -114,7 +137,8 @@
           this.activeNum += 1;
         }
         this.showAnswerKey = false;
-        this.showCongratulations = false;
+        this.showYes = false;
+        this.showNo = false;
       }
     },
     components: {
@@ -124,7 +148,7 @@
       // 获取错题信息
       let that = this;
       var code = this.$route.params.code;
-      if (code) {
+      if (code && code !== 'all') {
         that.allQuestions = JSON.parse(code);
         that.activeNum = 0;
         this.allNum = that.allQuestions.length;
@@ -235,7 +259,6 @@
         li{
           display: inline-block;
           width:24%;
-          min-height:20px;
           button{
             width:100px;
             height:30px;

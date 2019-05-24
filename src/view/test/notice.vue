@@ -9,7 +9,7 @@
         <P>
           <span>试卷名称</span>
           安全素质测评试卷（
-          <span>五年级</span>
+          <span>{{userGrade.substring(0,3)}}</span>
           ）
         </P>
         <P>
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   import systemTitle from '@/components/title'
   import submitBtn from '@/components/submitBtn'
   export default {
@@ -41,6 +42,11 @@
     data () {
       return {
       }
+    },
+    computed: {
+      ...mapState({
+        userGrade: state => state.student.grade
+      })
     },
     methods: {
       goTest(){

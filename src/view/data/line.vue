@@ -68,6 +68,8 @@
           yAxis : [
           {
             type : 'value',
+            max: 100,
+            min: 0,
             splitNumber: 10,
             position: 'left',
             axisLine : {    // 轴线
@@ -81,8 +83,10 @@
               show:true,
               formatter: function (value) {
                 return value + '%'
+              },
+              textStyle: {
+                color: '#39C7C8'
               }
-
             },
             nameTextStyle: {
               width: 100,
@@ -105,8 +109,11 @@
             axisLabel : {
               interval: 'auto',    // {number}
               margin: 8,
-              formatter: '{value}'
-            },
+              formatter: '{value}',
+              textStyle: {
+                color: '#2E2AA4'
+              }
+              },
             splitLine : {
               show: false
             }

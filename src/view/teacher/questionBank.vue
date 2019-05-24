@@ -161,7 +161,7 @@
 <script>
   import file from '@/assets/file/qusTemplate.xlsx'
   import systemTitle from '@/components/title'
-  import { checkQuestions } from '@/api/bank'
+  import { checkQuestions, delQuestion } from '@/api/bank'
 export default {
   name: '',
   data(){
@@ -232,8 +232,19 @@ export default {
     editQus() {
       // 编辑 题库
     },
-    delQus() {
+    delQus(id) {
       // 删除 题库
+      delQuestion(id).then(res => {
+        console.log('shanchu')
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+        checkQuestions(this.currentPage, 10).then(res => {
+          this.totalNum = res.data.total;
+          this.exerciseData = res.data.rows;
+        })
+      })
     },
     beforeUpload() {
         if (this.gradeVal === '') {

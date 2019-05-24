@@ -46,8 +46,8 @@
               <div class="test" @click="goPractice">
                 <img src="@/assets/images/exercise.png" alt="">
                 <div>
-                  <span>1206</span>&nbsp;/
-                  <span>3000</span>题
+                  <!--<span>1206</span>&nbsp;/-->
+                  <!--<span>3000</span>题-->
                 </div>
               </div>
             </el-col>
@@ -55,8 +55,8 @@
               <div class="test" @click="goWrongPage">
                 <img src="@/assets/images/wrong.png" alt="">
                 <div>
-                  <span>1206</span>&nbsp;/
-                  <span>3000</span>题
+                  <!--<span>1206</span>&nbsp;/-->
+                  <!--<span>3000</span>题-->
                 </div>
               </div>
             </el-col>
@@ -136,6 +136,7 @@
                     <li style="width:16%;">
                       <img class="trendImg" v-if="item.trend === 1" src="@/assets/images/red.png" alt="">
                       <img class="trendImg" v-if="item.trend === 0" src="@/assets/images/gray.png" alt="">
+                      <span v-if="item.trend === 2">--</span>
                     </li>
                   </ul>
                 </div>
@@ -252,7 +253,7 @@
       transition: all 0.4s;
       height:100%;
       &:hover{
-        transform: scale(1.1);
+        transform: scale(1.05);
       }
       &>div{
         position:absolute;

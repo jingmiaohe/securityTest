@@ -5,7 +5,8 @@
       <div class="leftSideTitle">
       <system-title :showMenu="true" :showClose="true"></system-title>
       <div class="curNum">
-        <div>当前题目：{{activeNum+1}}/{{type === 'test'? 18 : exerciseAllNum}}</div>
+        <div v-if="type === 'test'">当前题目：{{activeNum+1}}/18</div>
+        <div v-else>当前题目：{{activeNum+1}}</div>
       </div>
       <div class="questionType">
         <img src="@/assets/images/questionType.png" alt="">
@@ -25,8 +26,8 @@
         ></question-comp>
       <div class="testFoot clearfix">
           <button class="pre" v-if="activeNum !== 0" @click="getPreQuestion">上一题</button>
-        <button class="center"  v-if="type==='exercise'" @click="confirm">确定</button>
-          <button class="next" v-if="activeNum !== 17" @click="getNextQuestion">下一题</button>
+          <button class="center"  v-if="type==='exercise'" @click="confirm">确定</button>
+          <button class="next" v-if="activeNum !== allQuestions.length - 1" @click="getNextQuestion">下一题</button>
         </div>
       </div>
     </div>
@@ -62,16 +63,16 @@
             v-for="(item, index) in questionCardList"
         @click="chooseQuestionList(index, item.answers)">{{item.num}}</li>
       </ul>
-      <ul class="cardList clearfix" v-if="type === 'exercise'">
-        <li :class="item.isRight!== ''?item.isRight?'answerdRight':'answerdWrong':'noAnswer'+(index === activeNum ? ' active': '')"
+      <ul class="cardList clearfix" ref="cardList" v-if="type === 'exercise'">
+        <li :class="(item.isRight!== ''?item.isRight?'answeredRight':'answeredWrong':'noAnswer')+(index === activeNum ? ' active': '')"
             v-for="(item, index) in questionCardList"
-            @click="chooseQuestionList(index, item.answers)">{{item.num}}</li>
+            @click="chooseQuestionList(index, item.answers, item.isRight)">{{item.num}}</li>
       </ul>
       <div class="answerKeys" v-if="type === 'exercise'">
         <span @click="isShowAnswerKey">答案解析</span>
         <div v-show="showAnswerKey">
-          <p><b>正确答案：</b><b>{{allQuestions[activeNum]?allQuestions[activeNum]['answer']:'--'}}</b></p>
-          <p>{{allQuestions[activeNum]?allQuestions[activeNum]['analysis']:'--'}}</p>
+          <p><b>正确答案：</b><b>{{allQuestions[answerKeyNum]?allQuestions[answerKeyNum]['answer']:'--'}}</b></p>
+          <p>{{allQuestions[answerKeyNum]?allQuestions[answerKeyNum]['analysis']:'--'}}</p>
         </div>
       </div>
       <div class="commit">
@@ -93,7 +94,7 @@
     data () {
       return {
         type: this.$route.params.code, // 'exercise' 'test'
-        exerciseAllNum: 3000,
+//        exerciseAllNum: 3000,
         questionType: '',
         questionTypeDesc: '',
         questionWeighting: '', // 分值
@@ -106,11 +107,19 @@
         timer: null, // 倒计时
         timerContent: '', // 倒计时文字选项
         showAnswerKey: false, // 是否显示答案解析
-        oldAns: '' //放置旧答案
+        oldAns: '', //放置旧答案
+        answerKeyNum: 1
       }
     },
     methods: {
+      scrollDiv() {
+        var elem = this.$refs.cardList;
+        this.$nextTick(function() {
+          elem.scrollTop = elem.scrollHeight;
+        })
+      },
       goSubmit() {
+//        this.confirm();
         endExam(this.examId, this.questionCardList).then(res => {
           this.$router.push({
             name: 'score',
@@ -118,6 +127,22 @@
               testScore: JSON.stringify(res.data)
             }
           })
+        })
+      },
+      getMoreQuestions() {
+        var that = this;
+        exercise().then((res) => {
+          var tempArr = res.data;
+          var oldArr = [];
+          Object.assign(oldArr, that.allQuestions);
+          that.allQuestions = that.allQuestions.concat(tempArr);
+          var len = tempArr.length;
+          var curLen = oldArr.length;
+          var num = 1;
+          for(num; num <= len; num++) {
+            that.questionCardList.push({num: num + curLen, id:tempArr[num-1].id, answers: '', isRight: ''})
+          }
+          that.scrollDiv();
         })
       },
       getPreQuestion() {
@@ -128,23 +153,42 @@
         this.showAnswerKey = false;
       },
       getNextQuestion() {
-        if (this.type === 'exercise' && this.curAnswer) {
-          this.confirm();
+        var that = this;
+//        if (that.type === 'exercise' && that.curAnswer) {
+        if (that.type === 'exercise') {
+//          that.confirm();
+          if(that.activeNum === that.allQuestions.length - 2) {
+            // 再加18道
+            that.getMoreQuestions();
+          }
         }
         this.activeNum += 1;
         this.showAnswerKey = false;
       },
       // 单机答题卡
-      chooseQuestionList(index, old) {
+      chooseQuestionList(index, old, isRight) {
         this.activeNum = index;
-        console.log(old)
         this.oldAns = old;
+        if (isRight === '' || isRight === true) {
+          this.showAnswerKey = false;
+        } else {
+          this.showAnswerKey = true;
+        }
+        if(this.type === 'exercise' && index === this.allQuestions.length - 1) {
+          this.getMoreQuestions();
+        }
       },
       isShowAnswerKey() {
+        this.answerKeyNum = this.activeNum;
         this.showAnswerKey = !this.showAnswerKey;
       },
       addWrong() {
-        addWrongQue(this.allQuestions[this.activeNum]['id'])
+        addWrongQue(this.allQuestions[this.activeNum]['id']).then(res => {
+          this.$message({
+            message: '成功加入错题库',
+            type: 'success'
+          })
+        })
       },
       confirm() {
         // 验证答案
@@ -153,13 +197,26 @@
           return item.num === that.activeNum + 1
         })
         var tempObj = Object.assign({},that.questionCardList[ind]);
-        var bool = that.curAnswer === that.allQuestions[ind]['answer'];
+        var tempRightAns = that.allQuestions[ind]['answer'];
+        while(tempRightAns.indexOf("，") !== -1){  //寻找每一个英文逗号，并替换
+          tempRightAns = tempRightAns.replace("，",",");
+        }
+        console.log(tempRightAns)
+        var bool = that.curAnswer === tempRightAns;
         tempObj['isRight'] = bool;
         that.$set(that.questionCardList, ind, tempObj);
         if(!bool) {
-          addWrongQue(this.allQuestions[ind]['id'])
+          that.answerKeyNum = that.activeNum;
+          that.showAnswerKey = true;
+          addWrongQue(this.allQuestions[ind]['id']).then(res => {
+            that.$message({
+              message: '已为您加入错题库',
+              type: 'success'
+            })
+          })
+        } else {
+          that.showAnswerKey = false;
         }
-
       },
       // 开始倒计时
       startTimer(maxTime) {
@@ -383,6 +440,8 @@
       }
       .cardList{
         margin: 0 10px 0 20px;
+        max-height:216px;
+        overflow-y: auto;
         li{
           cursor: pointer;
           float:left;
@@ -393,13 +452,13 @@
           margin-right: 10px;
           margin-bottom: 10px;
           border-radius: 5px;
-          &.answerdRight{
+          &.answeredRight{
             background-color: @cardListBgColor;
             border:1px solid @noticePaneColor;
           }
-          &.answerdWrong{
-            background-color: @cardColor;
-            border:1px solid red;
+          &.answeredWrong{
+            background-color: @answerWrongBg;
+            border:1px solid @answerWrong;
             &.active{
               border-width: 2px;
             }
@@ -443,9 +502,10 @@
           margin:10px 30px;
           padding: 10px 10px;
           border: 1px solid #000;
-          max-height:200px;
+          max-height:240px;
           background-color: #fff;
           border-radius:10px;
+          overflow-y: auto;
           &>p{
             margin-bottom:10px;
           }

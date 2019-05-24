@@ -54,7 +54,12 @@ export default {
     },
     editNotice(id, content) {
       if(id) {
-        editNotice(id, content);
+        editNotice(id, content).then(res => {
+          this.$message({
+            message: '成功发布公告',
+            type: 'success'
+          })
+        });
       } else {
         addNotice(content);
       }

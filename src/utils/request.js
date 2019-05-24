@@ -31,6 +31,7 @@ service.interceptors.response.use(
      * code为非0是抛错 可结合自己业务进行修改
      */
     const res = response.data
+    console.log(res)
     if (res.status !== 0) {
       Message({
         message: res.message,
