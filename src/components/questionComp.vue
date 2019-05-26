@@ -30,23 +30,23 @@
       <li>
         <img v-if="question.option1Rich && (question.type === 4 || question.type === 5)" :src="question.option1Rich" alt="">
         <br v-if="question.option1Rich && (question.type === 4 || question.type === 5)">
-        <button :class="choosedButtonClass('A')"
+        <button     v-if="question.option1Text" :class="choosedButtonClass('A')"
                 @click="chooseAnswer('A',question.id)">A、{{question.option1Text}}</button>
       </li>
       <li>
         <img v-if="question.option2Rich && (question.type === 4 || question.type === 5)" :src="question.option2Rich" alt="">
         <br v-if="question.option2Rich && (question.type === 4 || question.type === 5)">
-        <button :class="choosedButtonClass('B')"
+        <button v-if="question.option2Text" :class="choosedButtonClass('B')"
                 @click="chooseAnswer('B',question.id)">B、{{question.option2Text}}</button></li>
       <li>
         <img v-if="question.option3Rich && (question.type === 4 || question.type === 5)" :src="question.option3Rich" alt="">
         <br v-if="question.option3Rich && (question.type === 4 || question.type === 5)">
-        <button :class="choosedButtonClass('C')"
+        <button v-if="question.option3Text" :class="choosedButtonClass('C')"
                 @click="chooseAnswer('C',question.id)">C、{{question.option3Text}}</button></li>
       <li v-if="question.option4Text">
         <img v-if="question.option4Rich && (question.type === 4 || question.type === 5)" :src="question.option4Rich" alt="">
         <br v-if="question.option4Rich && (question.type === 4 || question.type === 5)">
-        <button :class="choosedButtonClass('D')"
+        <button v-if="question.option4Text" :class="choosedButtonClass('D')"
                 @click="chooseAnswer('D',question.id)">D、{{question.option4Text}}</button>
       </li>
     </ul>

@@ -89,6 +89,11 @@
   import submitBtn from '@/components/submitBtn'
   import questionComp from '@/components/questionComp'
   import { exam, endExam, exercise, addWrongQue} from '@/api/test'
+  function checkAns(ansStr, arrStr) {
+    var str1 = ansStr.split(',').sort().join(',');
+    var str2 = arrStr.split(',').sort().join(',');
+    return str1 === str2;
+  }
   export default {
     name: 'test',
     data () {
@@ -201,8 +206,7 @@
         while(tempRightAns.indexOf("，") !== -1){  //寻找每一个英文逗号，并替换
           tempRightAns = tempRightAns.replace("，",",");
         }
-        console.log(tempRightAns)
-        var bool = that.curAnswer === tempRightAns;
+        var bool = checkAns(tempRightAns, that.curAnswer);
         tempObj['isRight'] = bool;
         that.$set(that.questionCardList, ind, tempObj);
         if(!bool) {

@@ -66,6 +66,11 @@
   import systemTitle from '@/components/title'
   import questionComp from '@/components/questionComp'
   import { getWrongQus, delWrongQue } from '@/api/test'
+    function checkAns(ansStr, arrStr) {
+      var str1 = ansStr.split(',').sort().join(',');
+      var str2 = arrStr.split(',').sort().join(',');
+      return str1 === str2;
+    }
   export default {
     name: 'wrongPage',
     data () {
@@ -119,7 +124,7 @@
         while(tempRightAns.indexOf("，") !== -1){  //寻找每一个英文逗号，并替换
           tempRightAns = tempRightAns.replace("，",",");
         }
-        if (this.curAnswer === tempRightAns) {
+        if (checkAns(tempRightAns, this.curAnswer)) {
           this.showYes = true;
           delWrongQue(this.allQuestions[this.activeNum]['id']).then(res => {
             this.$message({
