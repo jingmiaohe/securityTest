@@ -43,7 +43,8 @@
         <!---->
         <el-row :gutter="20">
           <el-col :span="8">
-            <img src="@/assets/images/userAvatar.png" alt="头像">
+            <img v-if="userSex === '女'" src="@/assets/images/userAvatarWomen.jpg" alt="头像">
+            <img v-else src="@/assets/images/userAvatar.png" alt="头像">
           </el-col>
           <el-col :span="16">
             <ul>

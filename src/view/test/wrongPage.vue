@@ -159,9 +159,18 @@
         this.allNum = that.allQuestions.length;
       } else {
         getWrongQus().then((res) => {
-          that.allQuestions = res.data;
-          that.activeNum = 0;
-          this.allNum = res.data.length;
+          if(res.data.length === 0) {
+            this.$message({
+              message: '您已无错题记录，请重新开始测试',
+              type: 'warning'
+            });
+            this.$router.push('/data');
+          } else {
+            that.allQuestions = res.data;
+            that.activeNum = 0;
+            that.allNum = res.data.length;
+          }
+
         })
       }
     }

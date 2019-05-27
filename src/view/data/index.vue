@@ -10,7 +10,8 @@
                 <!---->
                 <el-row>
                   <el-col :span="8" style="height:100%;overflow: hidden;padding:20px;">
-                    <img src="@/assets/images/userAvatar.png" alt="头像">
+                    <img v-if="userSex === '女'" src="@/assets/images/userAvatarWomen.jpg" alt="头像">
+                    <img v-else src="@/assets/images/userAvatar.png" alt="头像">
                   </el-col>
                   <el-col :span="16" style="height:100%;overflow: hidden">
                     <ul>

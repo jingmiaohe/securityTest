@@ -107,7 +107,7 @@
           } else {
             arr.push(option);
           }
-          that.curAnswer = arr.join(',');
+          that.curAnswer = arr.sort().join(',');
         }
         that.$emit('resetCurAnswer', that.curAnswer)
       },
