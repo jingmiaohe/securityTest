@@ -103,9 +103,15 @@
         <el-col :span="8"  style="height:100%;" class="rightSide">
           <el-row style="height:50%; padding-bottom: 20px;">
             <div class="group">
-              <div class="title">成长趋势</div>
+              <div class="title">
+                <span>成长趋势</span>
+                <p style="float:right;margin-right:10px;">
+                  <span :class="isMonth?'active':''" @click="goChooseMonthData">月</span>
+                  <span :class="isMonth?'':'active'" @click="goChooseDayData">日</span>
+                </p>
+              </div>
               <div>
-                <double-line :lineDataStr = "lineDataStr"></double-line>
+                <double-line :lineDataStr = "lineDataStr" :isMonth="isMonth"></double-line>
               </div>
             </div>
           </el-row>
@@ -153,7 +159,7 @@
 <script>
   import systemTitle from '@/components/title'
   import { mapState } from 'vuex'
-  import { series, rank } from '@/api/data'
+  import { DaySeries,MonthSeries, rank } from '@/api/data'
   import pie  from './pie'
   import doubleLine  from './line'
   export default {
@@ -161,7 +167,8 @@
     data () {
       return {
         rankData: [],
-        lineDataStr: ''
+        lineDataStr: '',
+        isMonth: true
       }
     },
     computed: mapState({
@@ -184,13 +191,25 @@
       },
       goWrongPage() {
         this.$router.push({name: 'wrongPage', params: {code: 'all'}})
+      },
+      goChooseMonthData() {
+        this.isMonth = true;
+        MonthSeries().then(res => {
+          this.lineDataStr = JSON.stringify(res.data);
+        })
+      },
+      goChooseDayData() {
+        this.isMonth = false;
+        DaySeries().then(res => {
+          this.lineDataStr = JSON.stringify(res.data);
+        })
       }
     },
     created() {
       rank().then(res => {
         this.rankData = res.data.rankData;
       })
-      series().then(res => {
+      MonthSeries().then(res => {
         this.lineDataStr = JSON.stringify(res.data);
       })
     }
@@ -201,7 +220,7 @@
   .dataPage {
     height: calc(~"100% - 60px");
     padding:30px;
-    background-color:#ddd;
+    background-color:@bgBlue;
     .userInfo , .chartPie, .test, .statistics{
       /*height:200px;*/
       height:100%;
@@ -316,6 +335,15 @@
         border-bottom: 1px solid #ddd;
         height:36px;
         line-height:36px;
+        p{
+          span{
+            cursor:pointer;
+            color:@bgBlue;
+            &.active{
+              color:black;
+            }
+          }
+        }
       }
     }
     .group{

@@ -8,6 +8,10 @@
   export default {
     name: 'doubleLine',
     props: {
+      isMonth: {
+        type: Boolean,
+        default: true
+      },
       lineDataStr: {
         type: String,
         default: ''
@@ -26,6 +30,15 @@
       }
     },
     methods: {
+      getDays() {
+        // 获取当前日期
+        var lineDate = new Date();
+        var arr = [];
+        for(var i = 0;i<7;i++){
+          arr.push(new Date(lineDate.getTime() - i*24*60*60*1000).getDate())
+        }
+        return arr.sort();
+      },
       initChart() {
         var that = this;
         this.chart = echarts.init(this.$el, 'macarons');
@@ -55,15 +68,16 @@
                 show:true,
                 margin: 8,
                 rotate: 45,
-                formatter: '{value}月',
+                formatter: that.isMonth?'{value}月':'{value}日',
                 textStyle: {
                   fontSize: 12
                 }
               },
-              data : [
+              data :
+                that.isMonth?[
                 '1','2','3','4','5','6','7','8','9','10','11','12'
-              ]
-            }
+              ]:that.getDays()
+      }
           ],
           yAxis : [
           {
@@ -123,11 +137,13 @@
           {
             name: '正确率',
             type: 'line',
+            smooth:false,
             data: leftData
           },
           {
             name:'总题量',
             type: 'line',
+            smooth:false,
             yAxisIndex: 1,
             data: rightData
           }

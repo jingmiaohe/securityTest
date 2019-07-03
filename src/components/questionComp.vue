@@ -16,8 +16,8 @@
       </video-player>
     </div>
     <ul v-if="question.type === 0 || question.type === 3" class="questionOption optionJudge">
-      <li><button :class="choosedButtonClass('正确')" @click="chooseAnswer('正确',question.id)">正确</button></li>
-      <li><button :class="choosedButtonClass('错误')" @click="chooseAnswer('错误',question.id)">错误</button></li>
+      <li><button :class="choosedButtonClass(question.option1Text)" @click="chooseAnswer(question.option1Text,question.id)">{{question.option1Text}}</button></li>
+      <li><button :class="choosedButtonClass(question.option2Text)" @click="chooseAnswer(question.option2Text,question.id)">{{question.option2Text}}</button></li>
     </ul>
     <ul v-if="question.type === 1 || question.type === 2" class="questionOption optionCol">
       <li><button :class="choosedButtonClass('A')" @click="chooseAnswer('A',question.id)">A、{{question.option1Text}}</button></li>
@@ -199,6 +199,7 @@
     padding: 0 20px;
     z-index:10;
     .questionTitle{
+			font-size:18px;
       font-weight: bold;
       margin-bottom:20px;
       text-align: center;
