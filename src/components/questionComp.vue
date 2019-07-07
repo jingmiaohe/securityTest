@@ -117,7 +117,8 @@
     computed: {
       choosedButtonClass() {
         return function(option) {
-          return this.curAnswer.indexOf(option) > -1 ? 'choosed': ''
+					return this.curAnswer.split(',').includes(option) ? 'choosed' : ''
+          // return this.curAnswer.indexOf(option) > -1 ? 'choosed': ''
         }
       },
       playerOptions(){

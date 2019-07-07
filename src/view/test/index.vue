@@ -3,15 +3,16 @@
     <!--测试-->
     <div class="leftSide">
       <div class="leftSideTitle">
-      <system-title :showMenu="true" :showClose="true"></system-title>
-      <div class="curNum">
-        <div v-if="type === 'test'">当前题目：{{activeNum+1}}/18</div>
-        <div v-else>当前题目：{{activeNum+1}}</div>
-      </div>
-      <div class="questionType">
-        <img src="@/assets/images/questionType.png" alt="">
-        <span>{{questionTypeDesc}}</span>
-        <!--文字判断 图片判断 文字选择 图片选择 视频分析-->
+        <system-title :showMenu="true" :showClose="true"></system-title>
+        <div class="curNum">
+          <div v-if="type === 'test'">当前题目：{{activeNum+1}}/18</div>
+          <div v-else>当前题目：{{activeNum+1}}</div>
+        </div>
+        <div class="questionType">
+          <img src="@/assets/images/questionType.png" alt="">
+          <span>{{questionTypeDesc}}</span>
+          <!--文字判断 图片判断 文字选择 图片选择 视频分析-->
+        </div>
       </div>
         <question-comp
           v-for="(item, index) in allQuestions"
@@ -29,7 +30,6 @@
           <button class="center"  v-if="type==='exercise'" @click="confirm">确定</button>
           <button class="next" v-if="activeNum !== allQuestions.length - 1" @click="getNextQuestion">下一题</button>
         </div>
-      </div>
     </div>
     <!--按钮-->
     <div class="rightSide">
